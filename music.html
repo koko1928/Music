@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Auto-Generated Music</title>
+</head>
+<body>
+	<button onclick="playMusic()">Play music</button>
+	<script>
+		function playMusic() {
+			const notes = generateNotes(8, 500, 1000);
+			const audioCtx = new AudioContext();
+			const gainNode = audioCtx.createGain();
+			gainNode.connect(audioCtx.destination);
+
+			let time = audioCtx.currentTime;
+			notes.forEach((note) => {
+				const oscillator = audioCtx.createOscillator();
+				oscillator.type = "sine";
+				oscillator.frequency.setValueAtTime(note.frequency, time);
+				gainNode.gain.setValueAtTime(1, time);
+				oscillator.connect(gainNode);
+				oscillator.start(time);
+				oscillator.stop(time + (note.duration / 1000));
+				time += note.duration / 1000;
+			});
+		}
+
+		function generateNotes(numNotes, minDuration, maxDuration) {
+			const notes = [
+				{ note: "C", frequency: 261.63 },
+				{ note: "D", frequency: 293.66 },
+				{ note: "E", frequency: 329.63 },
+				{ note: "F", frequency: 349.23 },
+				{ note: "G", frequency: 392 },
+				{ note: "A", frequency: 440 },
+				{ note: "B", frequency: 493.88 }
+			];
+			let generatedNotes = [];
+			for (let i = 0; i < numNotes; i++) {
+				const randomNote = notes[Math.floor(Math.random() * notes.length)];
+				const randomDuration = Math.floor(Math.random() * (maxDuration - minDuration + 1) + minDuration);
+				generatedNotes.push({
+					note: randomNote.note + "5",
+					frequency: randomNote.frequency * 2,
+					duration: randomDuration
+				});
+			}
+			return generatedNotes;
+		}
+	</script>
+</body>
+</html>
